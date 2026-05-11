@@ -2,20 +2,21 @@ import streamlit as st
 from openai import OpenAI
 
 # 페이지 설정
-st.set_page_config(page_title="고세구 챗봇", page_icon="🦊")
+st.set_page_config(page_title="저녁 메뉴 추천 챗봇", page_icon="🍽️")
 
 # 제목 및 설명
-st.title("🦊 고세구 챗봇")
+st.title("🍽️ 저녁 메뉴 추천 챗봇")
 st.write(
-    "이세계아이돌 멤버 고세구 컨셉의 AI 챗봇입니다! "
-    "세구 특유의 귀엽고 장난기 있는 말투로 대화해보세요 💜"
+    "오늘 저녁 뭐 먹을지 고민된다면 물어보세요! 😋 "
+    "기분, 날씨, 음식 취향에 맞춰 메뉴를 추천해드립니다."
 )
 
-# API 키 입력
+# OpenAI API 키 입력
 openai_api_key = st.text_input("OpenAI API 키", type="password")
 
 if not openai_api_key:
-    st.info("OpenAI API 키를 입력해주세요!", icon="🗝️")
+    st.info("계속하려면 OpenAI API 키를 입력해주세요!", icon="🗝️")
+
 else:
     # OpenAI 클라이언트 생성
     client = OpenAI(api_key=openai_api_key)
@@ -30,7 +31,7 @@ else:
             st.markdown(message["content"])
 
     # 사용자 입력
-    if prompt := st.chat_input("세구랑 대화하기..."):
+    if prompt := st.chat_input("예: 매운 음식 먹고 싶어"):
 
         # 사용자 메시지 저장
         st.session_state.messages.append(
@@ -41,26 +42,29 @@ else:
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # 시스템 프롬프트 (고세구 캐릭터 설정)
+        # 시스템 프롬프트
         system_prompt = """
-        너는 이세계아이돌의 고세구처럼 말하는 AI 챗봇이다.
+        너는 저녁 메뉴를 추천해주는 AI 챗봇이다.
 
-        특징:
-        - 밝고 귀엽고 장난기 많은 성격
-        - 인터넷 밈과 드립을 자주 사용
-        - 반말 위주로 친근하게 말함
-        - 리액션이 크고 감정 표현이 풍부함
-        - 가끔 웃음을 위해 엉뚱한 말을 함
-        - 시청자와 친구처럼 대화함
-        - 문장 끝에 ㅋㅋ, ㅎㅎ, !!! 등을 자주 사용
+        규칙:
+        - 사용자의 기분, 날씨, 상황, 음식 취향을 고려해서 추천한다.
+        - 항상 3가지 메뉴를 추천한다.
+        - 각 메뉴마다 짧은 이유를 설명한다.
+        - 친근하고 맛있어 보이게 설명한다.
+        - 마지막에는 한 줄 질문으로 대화를 이어간다.
 
-        절대 하지 말 것:
-        - 너무 딱딱한 말투
-        - AI라고 반복해서 말하기
-        - 지나치게 진지한 설명만 하기
+        예시:
+        1. 김치찌개 🍲
+        - 얼큰하고 따뜻해서 스트레스 풀기 좋아!
+
+        2. 치킨 🍗
+        - 바삭한 치킨은 언제 먹어도 실패 없음 ㅎㅎ
+
+        마지막:
+        "오늘은 밥류가 땡겨? 면류가 땡겨?"
         """
 
-        # OpenAI 응답 생성
+        # GPT 응답 생성
         stream = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
