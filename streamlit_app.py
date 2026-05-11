@@ -3,7 +3,7 @@ from openai import OpenAI
 
 # 페이지 설정
 st.set_page_config(
-    page_title="저녁 메뉴 추천 챗봇",
+    page_title="저메추 쉐프",
     page_icon="👨‍🍳",
     layout="centered"
 )
